@@ -5,21 +5,21 @@ x-airflow-common:
   build:
     context: .
     dockerfile: Dockerfile
-  image: custom-airflow:2.7.1-python3.9
+  image: custom-airflow:latest-python3.11
   env_file:
     - airflow.env
   volumes:
-    - ./config:/mnt/c/airflow/config
-    - ./dags:/mnt/c/airflow/dags
-    - ./data:/mnt/c/airflow/data
-    - ./etls:/mnt/c/airflow/etls
-    - ./logs:/mnt/c/airflow/logs
-    - ./pipelines:/mnt/c/airflow/pipelines
-    - ./plugins:/mnt/c/airflow/plugins
-    - ./tests:/mnt/c/airflow/tests
-    - ./utils:/mnt/c/airflow/utils
+    - ./config:/opt/airflow/config:rw
+    - ./dags:/opt/airflow/dags:rw
+    - ./data:/opt/airflow/data:rw
+    - ./etls:/opt/airflow/etls:rw
+    - ./logs:/opt/airflow/logs:rw
+    - ./pipelines:/opt/airflow/pipelines:rw
+    - ./plugins:/opt/airflow/plugins:rw
+    - ./tests:/opt/airflow/tests:rw
+    - ./utils:/opt/airflow/utils:rw
    # - ./airflow.cfg:/opt/airflow/airflow.cfg
-    - ./requirements.txt:/mnt/c/airflow/requirements.txt
+    - ./requirements.txt:/opt/airflow/requirements.txt:rw
   depends_on:
     - postgres
     - redis
@@ -43,7 +43,7 @@ services:
   airflow-init:
     <<: *airflow-common
     command: >
-      bash -c "pip install -r /mnt/c/airflow/requirements.txt && airflow db init && airflow db upgrade && airflow users create --username admin --firstname admin --lastname admin --role Admin --email airflow@airflow.com --password admin && airflow db init"
+      bash -c "pip install -r /opt/airflow/requirements.txt && airflow db init && airflow db upgrade && airflow users create --username admin --firstname admin --lastname admin --role Admin --email airflow@airflow.com --password admin"
     restart: "no"
 
   airflow-webserver:
